@@ -64,6 +64,18 @@ class DBStorage:
         if obj is not None:
             self.__session.delete(obj)
 
+    def delete_all(self):
+        """
+           deletes all stored objects, for testing purposes
+        """
+        for c in classes.values():
+            a_query = self.__session.query(c)
+            all_objs = [obj for obj in a_query]
+            for obj in range(len(all_objs)):
+                to_delete = all_objs.pop(0)
+                to_delete.delete()
+        self.save()
+
     def reload(self):
         """reloads data from the database"""
         Base.metadata.create_all(self.__engine)
@@ -74,3 +86,16 @@ class DBStorage:
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
+
+    def get(self, cls, id):
+        """query on the current database session"""
+        if cls and id:
+            fetch = "{}.{}".format(cls.__name__, id)
+            all_obj = self.all(cls)
+            return all_obj.get(fetch)
+        return None
+
+    def count(self, cls=None):
+        """query on the current database session"""
+        objs = self.all(cls)
+        return len(objs)

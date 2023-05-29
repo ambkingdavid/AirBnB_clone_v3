@@ -15,10 +15,14 @@ from models.review import Review
 from models.state import State
 from models.user import User
 import json
-import os
+from os import environ, stat, remove, path
 import pycodestyle
 import unittest
-FileStorage = file_storage.FileStorage
+
+STORAGE_TYPE = environ.get('HBNB_TYPE_STORAGE')
+if STORAGE_TYPE != 'db':
+    FileStorage = file_storage.FileStorage
+storage = models.storage
 classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
            "Place": Place, "Review": Review, "State": State, "User": User}
 
@@ -113,3 +117,27 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    def test_count_cls(self):
+        """... checks count method with class input arg"""
+        storage.delete_all()
+        user = User()
+        user.save()
+        count_user = storage.count('User')
+        expected = 1
+        self.assertEqual(expected, count_user)
+
+    def test_count_all(self):
+        """... checks the count method with no class input"""
+        storage.delete_all()
+        user = User()
+        state = State()
+        user.save()
+        state.save()
+        count_all = storage.count()
+        expected = 2
+        self.assertEqual(expected, count_all)
+
+    def tearDownClass():
+        """tidies up the tests removing storage objects"""
+        storage.delete_all()
