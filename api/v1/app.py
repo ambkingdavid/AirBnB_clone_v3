@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""a module that starts the api"""
+"""
+Starts the application
+"""
 from flask import Flask
 from models import storage
 from api.v1.views import app_views
@@ -14,6 +16,9 @@ app.register_blueprint(app_views)
 # Define a method to handle app context teardown
 @app.teardown_appcontext
 def teardown_appcontext(error):
+    """
+    calls storage.close() to close the database connection
+    """
     storage.close()
 
 
