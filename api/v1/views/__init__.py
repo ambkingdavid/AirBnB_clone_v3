@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from flask import Blueprint
 # Wildcard import of everything in the package api.v1.views.index
 from api.v1.views.index import *
