@@ -59,7 +59,7 @@ def delete_review(review_id):
 
 
 @app_views.route("/places/<place_id>/reviews", methods=["POST"],
-                    strict_slashes=False)
+                 strict_slashes=False)
 def post_review(place_id):
     """Posts a new review"""
     form = request.get_json()
