@@ -58,7 +58,7 @@ def delete_place_using_placeid(place_id):
     abort(404)
 
 
-@app_views.route("/cities/city_id/places", methods=["POST"],
+@app_views.route("/cities/<city_id>/places", methods=["POST"],
                  strict_slashes=False)
 def post_place(city_id):
     """
