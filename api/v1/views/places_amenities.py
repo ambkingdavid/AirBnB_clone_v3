@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """
-Flask route that returns json status response
+a new view for the link between Place objects and Amenity objects
+that handles all default RESTFul API actions
 """
 from api.v1.views import app_views
 from flask import abort, jsonify, request
@@ -9,7 +10,8 @@ from os import environ
 STORAGE_TYPE = environ.get('HBNB_TYPE_STORAGE')
 
 
-@app_views.route('/places/<place_id>/amenities', methods=['GET'])
+@app_views.route('/places/<place_id>/amenities', methods=['GET'],
+                 strict_slashes=False)
 def amenities_per_place(place_id=None):
     """
         reviews route to handle http method for requested reviews by place
@@ -34,7 +36,7 @@ def amenities_per_place(place_id=None):
 
 
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
-                 methods=['DELETE', 'POST'])
+                 methods=['DELETE', 'POST'], strict_slashes=False)
 def amenity_to_place(place_id=None, amenity_id=None):
     """
         reviews route to handle http methods for given review by ID
