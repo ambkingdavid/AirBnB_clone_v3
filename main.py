@@ -1,16 +1,23 @@
 #!/usr/bin/python3
 """Testing file
 """
-import json
-import requests
+import hashlib
+import MySQLdb
+import sys
 
 if __name__ == "__main__":
-    """ verify if password is retrieve
+    """ Access to database and get password TODO
     """
-    r = requests.get("http://0.0.0.0:5050/api/v1/users")
-    r_j = r.json()
-    for user_j in r_j:
-        if user_j.get("password") is None:
+    user_email = "b@b.com"
+    clear_pwd = "pwdB"
+    hidden_pwd = hashlib.md5(clear_pwd.encode()).hexdigest()
+    
+    conn = MySQLdb.connect(host="localhost", port=3306, user=sys.argv[1], passwd=sys.argv[2], db=sys.argv[3], charset="utf8")
+    cur = conn.cursor()
+    cur.execute("SELECT password FROM users WHERE email = '{}' LIMIT 1".format(user_email))
+    query_rows = cur.fetchall()
+    for row in query_rows:
+        if hidden_pwd.lower() == row[0].lower():
             print("OK")
-        else:
-            print("Password is still present in User: {} - {}".format(user_j.get("email"), user_j.get("password")))
+    cur.close()
+    conn.close()
