@@ -6,6 +6,8 @@ that handles all default RESTFul API actions
 from api.v1.views import app_views
 from flask import abort, jsonify, request
 from models import storage
+from models.amenity import Amenity
+from models.place import Place
 from os import environ
 STORAGE_TYPE = environ.get('HBNB_TYPE_STORAGE')
 
@@ -16,19 +18,19 @@ def amenities_per_place(place_id=None):
     """
         reviews route to handle http method for requested reviews by place
     """
-    place_obj = storage.get('Place', place_id)
+    place_obj = storage.get(Place, place_id)
 
     if request.method == 'GET':
         if place_obj is None:
             abort(404, 'Not found')
-        all_amenities = storage.all('Amenity')
+        all_amenities = storage.all(Amenity)
         if STORAGE_TYPE == 'db':
             place_amenities = place_obj.amenities
         else:
             place_amen_ids = place_obj.amenities
             place_amenities = []
             for amen in place_amen_ids:
-                response.append(storage.get('Amenity', amen))
+                response.append(storage.get(Amenity, amen))
         place_amenities = [
             obj.to_json() for obj in place_amenities
             ]
@@ -41,8 +43,8 @@ def amenity_to_place(place_id=None, amenity_id=None):
     """
         reviews route to handle http methods for given review by ID
     """
-    place_obj = storage.get('Place', place_id)
-    amenity_obj = storage.get('Amenity', amenity_id)
+    place_obj = storage.get(Place, place_id)
+    amenity_obj = storage.get(Amenity, amenity_id)
     if place_obj is None:
         abort(404, 'Not found')
     if amenity_obj is None:
