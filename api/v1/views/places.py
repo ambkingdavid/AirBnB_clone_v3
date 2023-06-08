@@ -148,9 +148,9 @@ def places_search():
             elif len(p.amenities) > 0:
                 p_amenities = p.amenities
             if p_amenities and all([a in p_amenities for a in amenities]):
-                places_amenities.append(p)
+                places_amenities.append(p.to_dict())
     else:
         places_amenities = all_places
-    result = [place for place in places_amenities]
+    result = [place.to_dict() for place in places_amenities]
 
     return jsonify(result)
