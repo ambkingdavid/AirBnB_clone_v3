@@ -149,12 +149,12 @@ def places_search():
                 places_amenities.append(p.to_dict())
     else:
         places_amenities = [p.to_dict() for p in all_places]
-    result = {
-            k: [v_elem.to_dict() if isinstance(v_elem, Amenity)
-                else v_elem for v_elem in v]
-            if isinstance(v, list) else v
+    result = [
+            {k: [v_elem.to_dict() if isinstance(v_elem, Amenity)
+                 else v_elem for v_elem in v]
+                if isinstance(v, list) else v
+                for k, v in d.items()}
             for d in places_amenities
-            for k, v in d.items()
-         }
+        ]
 
     return jsonify(result)
