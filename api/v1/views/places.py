@@ -9,6 +9,9 @@ from flask import jsonify, abort, request, make_response
 from models.city import City
 from models.place import Place
 from models.user import User
+from models.amenity import Amenity
+from os import environ
+STORAGE_TYPE = environ.get('HBNB_TYPE_STORAGE')
 
 
 @app_views.route("/cities/<city_id>/places", methods=["GET"],
@@ -104,6 +107,7 @@ def update_place(place_id):
         return jsonify(place.to_dict()), 200
     abort(404)
 
+
 @app_views.route('/places_search', methods=['POST'])
 def places_search():
     """
@@ -116,8 +120,10 @@ def places_search():
     states = req_json.get('states')
     if states and len(states) > 0:
         all_cities = storage.all(City)
+        print(all_cities)
         state_cities = set([city.id for city in all_cities.values()
                             if city.state_id in states])
+        print(state_cities)
     else:
         state_cities = set()
     cities = req_json.get('cities')
@@ -129,7 +135,7 @@ def places_search():
     if len(state_cities) > 0:
         all_places = [p for p in all_places if p.city_id in state_cities]
     elif amenities is None or len(amenities) == 0:
-        result = [place.to_json() for place in all_places]
+        result = [place.to_dict() for place in all_places]
         return jsonify(result)
     places_amenities = []
     if amenities and len(amenities) > 0:
@@ -145,5 +151,6 @@ def places_search():
                 places_amenities.append(p)
     else:
         places_amenities = all_places
-    result = [place.to_dict() for place in places_amenities]
+    result = [place for place in places_amenities]
+
     return jsonify(result)

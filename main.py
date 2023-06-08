@@ -5,9 +5,20 @@ import json
 import requests
 
 if __name__ == "__main__":
+    """ Get amenity_ids with name Wifi or Ethernet
+    """
+    r = requests.get("http://0.0.0.0:5050/api/v1/amenities")
+    r_j = r.json()
+    
+    amenity_ids = []
+    for amenity_j in r_j:
+        if amenity_j.get('name') == "Oven" or amenity_j.get('name') == "Fridge":
+            amenity_ids.append(amenity_j.get('id'))
+    
+    # Places with Wifi AND Ethernet
+    
     """ POST /api/v1/places_search
     """
-    r = requests.post("http://0.0.0.0:5050/api/v1/places_search", data=json.dumps({}), headers={ 'Content-Type': "application/json" })
+    r = requests.post("http://0.0.0.0:5050/api/v1/places_search", data=json.dumps({ 'amenities': amenity_ids }), headers={ 'Content-Type': "application/json" })
     r_j = r.json()
-    print(type(r_j))
     print(len(r_j))
