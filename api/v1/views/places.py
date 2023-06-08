@@ -119,11 +119,9 @@ def places_search():
         abort(400, 'Not a JSON')
     states = req_json.get('states')
     if states and len(states) > 0:
-        all_cities = storage.all(City)
-        print(all_cities)
-        state_cities = set([city.id for city in all_cities.values()
+        all_cities = storage.all(City).values()
+        state_cities = set([city.id for city in all_cities
                             if city.state_id in states])
-        print(state_cities)
     else:
         state_cities = set()
     cities = req_json.get('cities')
@@ -150,7 +148,13 @@ def places_search():
             if p_amenities and all([a in p_amenities for a in amenities]):
                 places_amenities.append(p.to_dict())
     else:
-        places_amenities = all_places
-    result = [place.to_dict() for place in places_amenities]
+        places_amenities = [p.to_dict() for p in all_places]
+    result = {
+            k: [v_elem.to_dict() if isinstance(v_elem, Amenity)
+                else v_elem for v_elem in v]
+            if isinstance(v, list) else v
+            for d in places_amenities
+            for k, v in d.items()
+         }
 
     return jsonify(result)
